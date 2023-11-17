@@ -1,10 +1,11 @@
-#include "../include/torre.hpp" 
+#include "../include/torre.hpp"
+#include "../include/textura.hpp" 
 #include <GL/glut.h>
 #include <cmath>
 #include <string>
 
 void predio_principal(double largura, double altura);
-void bandeiras(double largura, double altura, int bandeira);
+void bandeiras(double largura, double altura, const string& caminho);
 
 void Torre::desenha(){
     //desenha predio principal
@@ -31,7 +32,7 @@ void Torre::desenha(){
     // desenha as bandeiras
     glPushMatrix();
         glTranslated(largura, altura, largura);
-        bandeiras(largura, altura, 1);
+        bandeiras(largura, altura, "../texturas/bandeira_br.png");
     glPopMatrix();
 
 }
@@ -133,42 +134,45 @@ void predio_principal(double largura, double altura){
 
 
 
-void bandeiras(double largura, double altura, int bandeira){
-    if(bandeira == 0){
-        glBegin(GL_LINES);
-            glVertex3f(0.0,0.0,0.0);
-            glVertex3f(0.0,largura,0.0);
-        glEnd();
+void bandeiras(double Largura, double altura, const string& caminho){
+    glBegin(GL_LINES);
+        glVertex3f(0.0,0.0,0.0);
+        glVertex3f(0.0,Largura,0.0);
+    glEnd();
 
-        glPushMatrix();
-        glTranslated(0.0,(2*largura)/3,0.0);
-        glColor3f(1.0, 1.0, 1.0);
-        glBegin(GL_TRIANGLE_STRIP);
-            glVertex3f(0.0,0.0,0.0);
-            glVertex3f(largura/2,0.0,0.0);
-            glVertex3f(0.0,largura/3,0.0);
-            glVertex3f(largura/2,largura/3,0.0);
-        glEnd();
-        glPopMatrix();
+    Textura bandeira(caminho.c_str());
 
-    }
-    else if(bandeira == 1){
-        glBegin(GL_LINES);
-            glVertex3f(0.0,0.0,0.0);
-            glVertex3f(0.0,largura,0.0);
-        glEnd();
+    GLfloat largura = static_cast<GLfloat>(Largura);
 
-        glPushMatrix();
-            glTranslated(0.0,(2*largura)/3,0.0);
-            glColor3f(0.0, 0.7, 0.0);
-            glBegin(GL_TRIANGLE_STRIP);
-                glVertex3f(0.0,0.0,0.0);
-                glVertex3f(largura/2,0.0,0.0);
-                glVertex3f(0.0,largura/3,0.0);
-                glVertex3f(largura/2,largura/3,0.0);
-            glEnd();
-        glPopMatrix();
-    }
+    GLfloat vertices[]{
+    0.0,0.0,0.0,
+    largura/2,0.0,0.0,
+    0.0,largura/3,0.0,
+    largura/2,largura/3,0.0
+    };
+
+    GLfloat ver_text[]{
+        0,0,
+        1,0,
+        0,1,
+        1,1
+    };
+        // Ativar o mapeamento de textura
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, bandeira.get_textureID());
+
+    glPushMatrix();
+    glTranslated(0.0,(2*largura)/3,0.0);
+    //glColor3f(1.0, 1.0, 1.0);
+    glBegin(GL_TRIANGLE_STRIP);
+        for (int i = 0; i < 4; i++) {
+            glTexCoord2fv(ver_text + i * 2);
+            glVertex3fv(vertices + i * 3);
+        }
+    glEnd();
+    glPopMatrix();
+
+    bandeira.~Textura();
 }
 
 Torre::Torre(double largura, double altura){

@@ -1,3 +1,4 @@
+#include "../include/textura.hpp"
 #include "../include/torre.hpp"
 #include "../include/chao.hpp"
 #include <GL/glut.h>
@@ -8,7 +9,7 @@
 
 
 // Variáveis para a posição da câmera
-float cameraRadius = 8.0f;
+float cameraRadius = 5.0f;
 float cameraTheta = M_PI / 2.0f;
 float cameraPhi = 0.0f;
 
@@ -19,24 +20,6 @@ void updateCameraPosition();
 
 Chao chao(10, 0.1);
 Torre torre(0.5, 3);
-
-GLuint textureID;  // ID da textura
-
-void loadTexture() {
-    // Carregar a textura
-    textureID = SOIL_load_OGL_texture(
-        "wesley.png",  // Substitua com o caminho para sua textura
-        SOIL_LOAD_AUTO,
-        SOIL_CREATE_NEW_ID,
-        SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y
-    );
-
-    if (textureID == 0) {
-    const char* error = SOIL_last_result();
-    printf("Erro ao carregar textura: %s\n", error);
-    }
-
-}
 
 /*void initLighting() {
     glEnable(GL_LIGHTING);
@@ -109,7 +92,7 @@ void desenha() {
     glPushMatrix();
         glTranslated(5.0,torre.get_altura()+3,5.0);
         glColor3f(0.0, 1.0, 1.0);
-        glutSolidSphere(1.0, 50, 50);
+        //glutSolidSphere(1.0, 50, 50);
     glPopMatrix();
 
     glutSwapBuffers();
@@ -119,8 +102,8 @@ void updateCameraPosition() {
     float x = cameraRadius * sin(cameraTheta) * cos(cameraPhi);
     float y = cameraRadius * cos(cameraTheta);
     float z = cameraRadius * sin(cameraTheta) * sin(cameraPhi);
-    //gluLookAt(x, y, z, 0, torre.get_altura(), 0, 0, 1, 0);
-    gluLookAt(0, torre.get_altura() + 0.3, 0, x, y, z, 0, 1, 0);
+    gluLookAt(x, y, z, 0, torre.get_altura(), 0, 0, 1, 0);
+    //gluLookAt(0, torre.get_altura() + 0.3, 0, x, y, z, 0, 1, 0);
 }
 
 void reshape(int width, int height) {

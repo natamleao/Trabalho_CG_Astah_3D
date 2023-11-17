@@ -13,7 +13,8 @@ all: \
 
 libeb: \
     $(OBJ)/chao.o \
-	$(OBJ)/torre.o
+	$(OBJ)/torre.o \
+	$(OBJ)/textura.o
 
 myapps: \
 	cleanapp \
